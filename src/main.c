@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define SIZE 15
 char map[SIZE][SIZE];
@@ -28,10 +30,32 @@ void printMap(){
 		}
 	printf("\n");
 	}
-}	
+}
+void placeWalls(){
+	int count = 0;
+
+	while (count < 30){
+		int x = rand() % SIZE;
+		int y = rand() % SIZE;
+
+		if (x == 0 || x == SIZE - 1 || y == 0 || y == SIZE - 1)
+			continue;
+		if (map[x][y] == '.')
+		{
+			map[x][y] = '#';
+			count++;
+		}
+	}
+}
+
 int main (){
 
+	printf("\nQuest for the Lost Treasure\n");
+
+	srand(time(NULL));
+
 	initializeMap();
+	placeWalls();
 	printMap();
 
 	return 0;
