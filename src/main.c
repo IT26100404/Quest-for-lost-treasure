@@ -42,6 +42,49 @@ void placePlayer(){
 		}
 	}
 }
+void movePlayer() {
+	
+	char move;
+	int newRow = player1.row;
+	int newCol = player1.col;
+
+	printf("\nEnter move (W/A/S/D): ");
+	scanf(" %c", &move);
+
+	switch(move)
+	{
+		case 'W':
+		case 'w':
+			newRow--;
+			break;
+		case 'S':
+		case 's':
+			newRow++;
+			break;
+		case 'A':
+		case 'a':
+			newCol--;
+			break;
+		case 'D':
+		case 'd':
+			newCol++;
+			break;
+		default:
+			printf("Invalid move\n");
+			return;
+	}
+	if (map[newRow][newCol] == '#'){
+
+		printf("Wall hit\n");
+		return;
+	}
+	map[player1.row][player1.col] = '.';
+
+	player1.row = newRow;
+	player1.col = newCol;
+
+	map[player1.row][player1.col] = player1.symbol;
+}
 
 void initializeMap(){
 
@@ -95,6 +138,13 @@ int main (){
 	initializeMap();
 	placeWalls();
 	placePlayer();
+	
+	printMap();
+	
+	movePlayer();
+
+	printf("\nAfter Move:\n");
+	
 	printMap();
 
 	return 0;
