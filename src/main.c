@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #define SIZE 15
@@ -111,6 +112,14 @@ void printMap(){
 		}
 	printf("\n");
 	}
+
+	printf("\n---------------------------------------\n");
+	printf("Player Information\n");
+	printf("-----------------------------------------\n");
+	printf("Health : %d\n", player1.health);
+	printf("Score  : %d\n", player1.score);
+	printf("Keys   : %d\n", player1.keys);
+	printf("-----------------------------------------\n");
 }
 void placeWalls(){
 	int count = 0;
@@ -128,7 +137,23 @@ void placeWalls(){
 		}
 	}
 }
+void placeTreasures(){
 
+	int count = 0;
+
+	while(count < 12){
+		int x = rand() % SIZE;
+		int y = rand() % SIZE;
+
+		if(x == 0 || x == SIZE - 1 || y == 0 || y == SIZE - 1)
+			continue;
+		if(map[x][y] == '.'){
+
+			map[x][y] = 'T';
+			count++;
+		}
+	}
+}
 int main (){
 
 	printf("\nQuest for the Lost Treasure\n");
@@ -137,6 +162,7 @@ int main (){
 
 	initializeMap();
 	placeWalls();
+	placeTreasures();
 	placePlayer();
 	
 	printMap();
