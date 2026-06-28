@@ -37,10 +37,20 @@ void placePlayer(){
 			player1.health = 100;
 			player1.keys = 0;
 			player1.symbol = '1';
-
-			map[x][y] = player1.symbol;
 			break;
 		}
+	}
+}
+void processTile(){
+
+	int r = player1.row;
+	int c = player1.col;
+
+	if (map[r][c] == 'T'){
+
+		player1.score += 10;
+		map[r][c] = '.';
+		printf("Treasure collected! +10 score\n");
 	}
 }
 void movePlayer() {
@@ -79,14 +89,12 @@ void movePlayer() {
 		printf("Wall hit\n");
 		return;
 	}
-	map[player1.row][player1.col] = '.';
 
 	player1.row = newRow;
 	player1.col = newCol;
 
-	map[player1.row][player1.col] = player1.symbol;
+	processTile();
 }
-
 void initializeMap(){
 
 	int i, j;
@@ -108,6 +116,9 @@ void printMap(){
 
 	for (i = 0; i < SIZE; i++){
 		for (j = 0; j < SIZE; j++){
+			if (i == player1.row && j == player1.col)
+				printf("1 ");
+			else
 			printf("%c ", map[i][j]);
 		}
 	printf("\n");
@@ -168,8 +179,6 @@ int main (){
 	printMap();
 	
 	movePlayer();
-
-	printf("\nAfter Move:\n");
 	
 	printMap();
 
