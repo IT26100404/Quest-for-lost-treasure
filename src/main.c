@@ -52,6 +52,22 @@ void processTile(){
 		map[r][c] = '.';
 		printf("Treasure collected! +10 score\n");
 	}
+	else if (map[r][c] == 'H'){
+
+		player1.health += 20;
+
+		if(player1.health > 100)
+			player1.health = 100;
+		
+		map[r][c] = '.';
+		printf("Health restored! +20 HP\n");
+	}else if (map[r][c] == 'K'){
+
+		player1.keys++;
+
+		map[r][c] = '.';
+		printf("Key collected!\n");
+	}
 }
 void movePlayer() {
 	
@@ -165,6 +181,39 @@ void placeTreasures(){
 		}
 	}
 }
+void placeHealthPacks(){
+
+	int count = 0;
+
+	while(count < 5){
+
+		int x = rand() % SIZE;
+		int y = rand() % SIZE;
+
+		if(map[x][y] == '.'){
+
+			map[x][y] = 'H';
+			count++;
+		}
+	}
+}
+void placeKeys(){
+
+	int count = 0;
+
+	while (count < 3){
+
+		int x = rand() % SIZE;
+		int y = rand() % SIZE;
+
+		if (map[x][y] == '.'){
+
+			map[x][y] = 'K';
+			count++;
+
+		}
+	}
+}
 int main (){
 
 	printf("\nQuest for the Lost Treasure\n");
@@ -174,6 +223,8 @@ int main (){
 	initializeMap();
 	placeWalls();
 	placeTreasures();
+	placeHealthPacks();
+	placeKeys();
 	placePlayer();
 	
 	printMap();
