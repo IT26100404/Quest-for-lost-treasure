@@ -18,6 +18,7 @@ typedef struct {
 }Player;
 
 char map[SIZE][SIZE];
+char hiddenTrap[SIZE][SIZE];
 
 Player player1;
 
@@ -67,6 +68,18 @@ void processTile(){
 
 		map[r][c] = '.';
 		printf("Key collected!\n");
+	}else if(hiddenTrap[r][c] == 'X'){
+
+		player1.health -= 20;
+
+		hiddenTrap[r][c] = '.';
+
+		printf("Trap triggered! -20 HP\n");
+
+		if(player1.health < 0){
+
+			player1.health = 0;
+		}
 	}
 }
 void movePlayer() {
@@ -104,6 +117,18 @@ void movePlayer() {
 
 		printf("Wall hit\n");
 		return;
+	}else if (map[newRow][newCol] =='D'){
+
+		if (player1.keys > 0)
+		{
+			player1.keys--;
+			map[newRow][newCol] = '.';
+			printf("Door unlocked!\n");
+		}
+		else {
+			printf("You need a key!\n");
+			return;
+		}
 	}
 
 	player1.row = newRow;
@@ -117,6 +142,9 @@ void initializeMap(){
 
 	for (i = 0; i < SIZE; i++){
 		for (j = 0; j < SIZE; j++){
+
+			hiddenTrap[i][j] = '.';
+
 			if (i == 0 || i == SIZE - 1 || j == 0 || j == SIZE - 1){
 				map[i][j] = '#';
 			}
@@ -214,6 +242,38 @@ void placeKeys(){
 		}
 	}
 }
+void placeTraps(){
+
+	int count = 0;
+
+	while(count < 10){
+
+		int x = rand() % SIZE;
+		int y = rand() % SIZE;
+
+		if(map[x][y] == '.' && hiddenTrap[x][y] == '.')
+		{
+			hiddenTrap[x][y] = 'X';
+			count++;
+		}
+	}
+}
+void placeDoors(){
+
+	int count = 0;
+
+	while(count < 3){
+
+		int x = rand() % SIZE;
+		int y = rand() % SIZE;
+
+		if (map[x][y] == '.'){
+
+			map[x][y] = 'D';
+			count++;
+		}
+	}
+}
 int remainingTreasures(){
 
 	int i, j;
@@ -233,6 +293,8 @@ void gameLoop(){
 
 	while(remainingTreasures() > 0){
 
+		printf("\n");
+		printf("Remaining treasures = %d\n", remainingTreasures());
 		printMap();
 		movePlayer();
 	}
@@ -252,6 +314,8 @@ int main (){
 	placeTreasures();
 	placeHealthPacks();
 	placeKeys();
+	placeTraps();
+	placeDoors();
 	placePlayer();
 	
 	gameLoop();
