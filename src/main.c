@@ -42,7 +42,19 @@ void placePlayer(){
 		}
 	}
 }
-void processTile(){
+int isValidMove(int x, int y){
+
+	if (x < 0||x >= SIZE||y < 0||y >= SIZE){
+
+		return 0;
+	}
+	if(map[x][y] == '#'){
+
+		return 0;
+	}
+	return 1;
+}
+void processTile(int index){
 
 	int r = player1.row;
 	int c = player1.col;
@@ -72,6 +84,9 @@ void processTile(){
 
 		player1.health -= 20;
 
+		if(player1.health < 0)
+			player1.health = 0;
+
 		hiddenTrap[r][c] = '.';
 
 		printf("Trap triggered! -20 HP\n");
@@ -82,60 +97,60 @@ void processTile(){
 		}
 	}
 }
-void movePlayer() {
+void movePlayer(int index) {
 	
-	char move;
-	int newRow = player1.row;
-	int newCol = player1.col;
+	char moves[5];
 
-	printf("\nEnter move (W/A/S/D): ");
-	scanf(" %c", &move);
+	printf("Enter move (W/A/S/D): ");
+	scanf("%4s", moves);
 
-	switch(move)
-	{
-		case 'W':
-		case 'w':
-			newRow--;
-			break;
-		case 'S':
-		case 's':
-			newRow++;
-			break;
-		case 'A':
-		case 'a':
-			newCol--;
-			break;
-		case 'D':
-		case 'd':
-			newCol++;
-			break;
-		default:
-			printf("Invalid move\n");
-			return;
-	}
-	if (map[newRow][newCol] == '#'){
+	for(int i = 0; moves[i] != '\0'; i++){
+	
+		int newRow = player1.row;
+		int newCol = player1.col;
 
-		printf("Wall hit\n");
-		return;
-	}else if (map[newRow][newCol] =='D'){
-
-		if (player1.keys > 0)
+		switch(moves[i])
 		{
-			player1.keys--;
-			map[newRow][newCol] = '.';
-			printf("Door unlocked!\n");
+			case 'W':
+			case 'w':
+				newRow--;
+				break;
+		
+			case 'S':
+			case 's':
+				newRow++;
+				break;
+		
+			case 'A':
+			case 'a':
+				newCol--;
+				break;
+		
+			case 'D':
+			case 'd':
+				newCol++;
+				break;
+		
+			default:
+				continue;
 		}
-		else {
-			printf("You need a key!\n");
-			return;
+		if(isValidMove(newRow, newCol)){
+
+			if(map[newRow][newCol] == 'D' && player1.keys == 0){
+
+				printf("Door is locked! Find a key.\n");
+			}
+			else{
+
+				player1.row = newRow;
+				player1.col = newCol;
+
+				processTile(index);
+			}
 		}
 	}
-
-	player1.row = newRow;
-	player1.col = newCol;
-
-	processTile();
 }
+	
 void initializeMap(){
 
 	int i, j;
@@ -161,7 +176,7 @@ void printMap(){
 	for (i = 0; i < SIZE; i++){
 		for (j = 0; j < SIZE; j++){
 			if (i == player1.row && j == player1.col)
-				printf("1 ");
+				printf("%c ", player1.symbol);
 			else
 			printf("%c ", map[i][j]);
 		}
@@ -291,16 +306,30 @@ int remainingTreasures(){
 }
 void gameLoop(){
 
-	while(remainingTreasures() > 0){
+	while(1){
 
-		printf("\n");
-		printf("Remaining treasures = %d\n", remainingTreasures());
 		printMap();
-		movePlayer();
-	}
 
-	printf("\nCongratulations!\n");
-	printf("All treasures collected!\n");
+		movePlayer(0);
+
+		printf("\nRemaining Treasures: %d\n", remainingTreasures());
+
+		if(player1.health <= 0){
+
+			printMap();
+			printf("\nGAME OVER!\n");
+			printf("You ran out of health\n");
+			break;
+		}
+
+		if(remainingTreasures() == 0 ){
+
+			printMap();
+			printf("Congratulations!\n");
+			printf("All treasures collected\n");
+			break;
+		}
+	}
 }
 			
 int main (){
